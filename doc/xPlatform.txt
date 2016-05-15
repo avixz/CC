@@ -1,0 +1,26 @@
+Cross Platform Code
+-------------------
+
+Ifdefs are considered harmful and should be avoided when possible.
+Conditional compilation is best handled by the build system (e.g. cmake)
+at a file granularity level.
+
+---------quote----------
+from stackoverflow:
+http://stackoverflow.com/questions/3627127/
+writing-cross-platform-c-code-windows-linux-and-mac-osx/3627208#3627208
+
+instead of repeating yourself and writing the same #ifdef .... lines again,
+again, and again, you're maybe better of declaring the probe() method in a
+header, and providing three different source files, one for each platform.
+This also has the benefit that if you add a platform you do not have to modify 
+all of your existing sources, but just add new files. Use your build system to 
+select the appropriate source file.
+
+Example structure:
+
+include/probe.h
+src/arch/win32/probe.cpp
+src/arch/linux/probe.cpp
+src/arch/mac/probe.cpp
+-------end_quote--------
