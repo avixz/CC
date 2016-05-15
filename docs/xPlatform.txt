@@ -1,0 +1,9 @@
+Cross Platform Code
+-------------------
+
+Uses conditional compilation
+Two options ifdef or build system excluding platform files
+Main function
+Two options extern or macro
+Platform main loop particularities
+Browser environment asynchronous loop (Emscripten)

@@ -1,0 +1,406 @@
+//---------------------------------------------------------------------------
+// CMake and the Android NDK
+//---------------------------------------------------------------------------
+
+Blog entry from: http://flohofwoe.blogspot.com.es/2014/04/cmake-and-android-ndk.html
+
+TL;DR: how to build Android NDK applications with cmake instead of the custom
+NDK build system, this is useful for projects which already use cmake to
+create multiplatform/cross-compiling build files.
+
+Update: Thanks to thp for pointing out a rather serious bug: packaging the
+standard shared libraries into the APK should NOT be necessary since these are
+pre-installed on the device. I noticed that I didn’t set a library search path
+to the toolchain lib dir in the linker step (-L…) which might explain the
+crash I had earlier, but unfortunately I can’t reproduce this crash anymore
+with the old behaviour (no library search path and no shared system libraries
+in the APK). I’ll keep an eye on that and update the blog post with my
+findings.
+
+I’ve spent the last 2.5 days adding Android support to Oryol’s build system.
+This wasn’t exactly on my to-do list until I sorta “impulse-bought” a Nexus7
+tablet last Thursday. It basically went like this “hey that looks quite neat
+for a non-iPad tablet => wow, scrolling feels smooth, very non-Android-like =>
+holy shit it runs my Oryol WebGL samples at 60fps => hmm 179 Euros seems quite
+reasonable…” - I must say I’m impressed how far the Android “user experience”
+has come since I last dabbled with it. The UI finally feels completely smooth,
+and I didn’t have any of those Windows8-Metro-style WTF-moments yet.
+
+Ok, so the logical next step would be to add support for Android to the Oryol
+build system (if you don’t know what Oryol is: it’s a new experimental C++11
+multi-plat engine I started a couple months ago:
+https://github.com/floooh/oryol).
+
+The Oryol build system is cmake-based, with a python script on top which
+simplifies managing the dozens of possible build-configs. A build-config is
+one specific combination of target-platform (osx, ios, win32, win64, …),
+build-tools (make, ninja, Visual Studio, Xcode, …) and compile-mode
+(Release, Debug) stored under a descriptive name (e.g. osx-xcode-debug,
+win32-vstudio-release, emscripten-make-debug, …).
+
+The front-end python script called ‘oryol’ is used to juggle all the
+build-configs, invoke cmake with the right options, and perform command line
+builds.
+
+One can for instance simply call:
+> ./oryol update osx-xcode-debug
+…to generate an Xcode project.
+
+Or to perform a command line build with xcodebuild instead:
+> ./oryol build osx-xcode-debug
+
+Or to build Oryol for emscripten with make in Release mode (provided the
+emscripten SDK has been installed):
+> ./oryol build emscripten-make-release
+
+This also works on Windows (32- or 64-bit):
+> oryol build win64-vstudio-debug
+> oryol build win32-vstudio-debug
+
+…or on Linux:
+> ./oryol build linux-make-debug
+
+Now, what I want to do with my shiny new Nexus7 is of course this:
+> ./oryol build android-make-debug
+
+This turned out to be harder then usual. But lets start at the beginning:
+A cross-compiling scenario is normally well defined in the GCC/cmake world:
+A toolchain wraps the target-platform’s compiler tools, system headers and
+libs under a standardized directory structure:
+
+The compiler tools usually reside in a bin subdirectory, and are called gcc
+and g++, or in the LLVM world: clang and clang++, sometimes the tools also
+have a prefix: pnacl-clang and pnacl-clang++), or they have completely
+different names (like emcc in the emscripten SDK).
+
+Headers and libs are often located in a usr directory (usr/include and
+usr/lib).
+
+The toolchain headers contain at least the the C-Runtime headers, like
+stdlib.h, stdio.h and usually the C++ headers (vector, iostream, …) and often
+also the OpenGL headers and other platform-specific header files.
+
+Finally the lib directory contains precompiled system libraries for the target
+platform (for instance libc.a, libc++.a, etc…).
+
+With such a standard gcc-style toolchain, cross-compilation is very simple.
+Just make sure that the toolchain-compiler tools are called instead of the
+host platform’s tools, and that the toolchain headers and libs are used.
+
+cmake standardizes this process with its so-called toolchain-files. A
+toolchain-file defines what compilers tools, headers and libraries should be
+used instead of the ‘default’ ones, and usually also overrides compile and
+linker flags.
+
+The typical strategy when adding a new target platform to a cmake build system
+looks like this:
+
+    setup the target platform’s SDK
+    create a new toolchain file (obviously)
+    tell cmake where to find the compiler tools, header and libs
+    add the right compile and linker flags
+
+Once the toolchain file has been created, call cmake with the toolchain file:
+> cmake -G"Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=[path-to-toolchain-file]
+           [path-to-project]
+
+Then run make in verbose mode to check whether the right compiler is called,
+and with the right options:
+> make VERBOSE=1
+
+This approach works well for platforms like emscripten or Google Native
+Client. Some platforms require a bit of additional cmake-magic, a Portable
+Native Client executable for instance must be “finalized” after it has been
+linked. Additional build steps like these can be added easily in cmake with
+the add_custom_command macro.
+
+Integrating Android as a new target platform isn’t so easy though:
+
+    the Android SDK itself only allows to create pure Java applications, for
+    C/C++ apps, the separate Android NDK (Native Development Kit) is required
+    the NDK doesn’t produce complete Android applications, it needs the
+    Android Java SDK for this
+    native Android code isn’t a typical executable, but lives in a shared
+    library which is called from Java through JNI
+    the Android SDK and NDK both have their own build systems which hide a lot
+    of complexity
+    …this complexity comes from the combination of different host platforms
+    (OSX, Linux, Windows), target API levels (android-3 to android-19, roughly
+    corresponding to Android versions), compiler versions (gcc4.6, gcc4.9,
+    clang3.3, clang3.4), and finally CPU architectures and instruction sets
+    (ARM, MIPS, X86, with several variations for ARM (armv5, armv7, with or
+    without NEON, etc…)
+    C++ support is still bolted on, the C++ headers and libs are not in their
+    standard locations
+    the NDK doesn’t follow the standard GCC toolchain directory structure at
+    all
+
+The custom build system coming with the NDK does a good job to hide all this
+complexity, for instance it can automatically build for all CPU architectures,
+but it stops after the native shared library has been compiled: it cannot
+create a complete Android APK. For this, the Android Java SDK tools must be
+called from the command line.
+
+So back to how to make this work in cmake:
+
+The plan looks simple enough:
+
+    compile our C/C++ code into a shared library instead of an executable
+    somehow get this into a Java APK package file…
+    …deploy APK to Android device and run it
+
+Step 1 starts rather innocent, create a toolchain file, look up the paths to
+the compiler tools, headers and libs in the NDK, then lookup the compiler and
+linker command line args by watching a verbose build. Then put all this stuff
+into the right cmake variables. At least this is how it usually works. Of
+course for Android it’s all a bit more complicated:
+
+    first we need to decide on a target CPU architecture and what compiler to
+    use. I settled for ARM and gcc4.8, which leads us to
+    […]/android-ndk-r9d/toolchains/arm-linux-androideabi-4.8/prebuilt
+    in there is a directory darwin-x86_64 so we need separate paths by host
+    platform here
+    finally in there is a bin directory with the compiler tools, so GCC would
+    be for instance at[..]/android-ndk-r9d/toolchains/
+    arm-linux-androideabi-4.8/prebuilt/darwin-x86_64/bin/
+    arm-linux-androideabi-gcc
+    there’s also an include, lib and share directory but the stuff in there
+    definitely doesn’t look like system headers and libs… bummer.
+    the system headers and libs are under the platforms directory instead:
+    [..]/android-ndk-r9d/platforms/android-19/arch-arm/usr/include,
+    and [..]/android-ndk-r9d/platforms/android-19/arch-arm/usr/lib
+    so far so good… put this stuff into the toolchain file and it seems to
+    compile fine – until the first C++ header must be included - WTF?
+    on closer inspection, the system include directory doesn’t contain any C++
+    headers, and there’s different C++ lib implementations to choose from
+    under [..]/android-ndk-r9d/sources/cxx-stl
+
+This was the point where was seriously thinking about calling it a day until I
+stumbled across the make-standalone-toolchain.sh in build/tools. This is a
+helper script which will build a standard GCC-style toolchain for one specific
+Android API-level and target CPU:
+
+sh make-standalone-toolchain.sh –-platform=android-19 
+  –-ndk-dir=/Users/[user]/android-ndk-r9d
+  –-install-dir=/Users/[user]/android-toolchain 
+  –-toolchain=arm-linux-androideabi-4.8
+  --system=darwin-x86_64
+
+This will extract the right tools, headers and libs, and also integrate C++
+headers (by default gnustl, but can be selected with the –stl option). When
+the script is done, a new directory ‘android-toolchain’ has been created which
+follows the GCC toolchain standard, and is much easier to integrate with
+cmake:
+
+The important directories are:
+- [..]/android-toolchain/bin, this is where the compiler tools are located,
+  these are still prefixed though (e.g. arm-linux-androideabi-gcc
+- [..]/android-toolchain/sysroot/usr/include CRT headers, plus EGL, GLES2,
+  etc…, but NOT the C++ headers
+- [..]/android-toolchain/include the C++ headers are here, under ‘c++’
+- [..]/android-toolchain/sysroot/usr/lib .a and .so system libs,
+  libstc++.a/.so is also here, no idea why
+
+After setting these paths in the toolchain file, and telling cmake to create
+shared-libs instead of exes when building for the Android platform I got the
+compiler and linker steps. Instead of a CoreHello executable, I got a
+libCoreHello.so. So far so good.
+
+Next step was to figure out how to get this .so into a APK which can be
+uploaded to an Android device.
+
+The NDK doesn’t help with this, so this is where we need the Java SDK tools,
+which uses yet another build system: ant. From looking at the SDK samples I
+figured out that it is usually enough to call ant debug or ant release within
+a sample directory to build an .apk file into a bin subdirectory. ant requires
+a build.xml file which defines the build tasks to perform. Furthermore,
+Android apps have an embedded AndroidManifest.xml file which describes how to
+run the application, and what privileges it requires. None of these exist in
+the NDK samples directories though…
+
+After some more exploration it became clear: The SDK has a helper script
+called android which is used (among many other things) to setup a project
+directory structure with all required files for ant to create a working APK:
+
+> android create project
+    --path MyApp
+    --target android-19
+    --name MyApp
+    --package com.oryol.MyApp
+    --activity MyActivity
+
+This will setup a directory ‘MyApp’ with a complete Android Java skeleton app.
+Run ‘ant debug’ in there and it will create a ‘MyApp-debug.apk’ in the ‘bin’
+subdirectory which can be deployed to the Android device with ‘adb install
+MyApp-debug.apk’, which when executed displays a ‘Hello World, MyActivity’
+string.
+
+Easy enough, but there are 2 problems, first: how to get our native shared
+library packaged and called?, and second: the Java SDK project directory
+hierarchy doesn’t really fit well into the source tree of a C/C++ project.
+There should be a directory per sample app with a couple of C++ files and a
+CMakeLists.txt file and nothing more.
+
+The first problem is simple to solve: the project directory hierarchy contains
+a libs directory, all .so files in there will be copied into the APK by ant
+(to verify this: a .apk is actually a zip file, simply changed the file
+extension to zip and peek into the file). One important point: the lib
+directory contains one sub-directory-level for the CPU architecture, so once
+we start to support multiple CPU instruction sets we need to put them into
+subdirectories like this:
+
+FlohOfWoe:libs floh$ ls
+armeabi     armeabi-v7a mips        x86
+
+Since my cmake build-system currently only supports building for
+armeabi-v7a I’ve put my .so file in the armeabi-v7a subdirectory.
+
+Now I thought that I had everything in place, I got an APK file with my native
+code .so lib in it, I used the NativeActivity and the
+android_native_app_glue.h approach, and logged out a “Hello World” to the
+system log (which can be inspected with adb logcat from the host system).
+
+And still the App didn’t start, instead this showed up in the log:
+
+D/AndroidRuntime(  482): Shutting down VM
+W/dalvikvm(  482): threadid=1: thread exiting with uncaught exception
+(group=0x41597ba8)
+E/AndroidRuntime(  482): FATAL EXCEPTION: main
+E/AndroidRuntime(  482): Process: com.oryol.CoreHello, PID: 482
+E/AndroidRuntime(  482): java.lang.RuntimeException: Unable to start activity
+ComponentInfo{com.oryol.CoreHello/android.app.NativeActivity}:
+java.lang.IllegalArgumentException: Unable to load native library:
+/data/app-lib/com.oryol.CoreHello-1/libCoreHello.so
+E/AndroidRuntime(  482):
+at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:2195)
+
+This was the second time where I banged my head against the wall for a while
+until I started to look into how linker dependencies are resolved for the
+shared library. I was pretty sure that I gave all the required libs on the
+linker command line (-lc -llog -landroid, etc), the error was that I assumed
+that these are linked statically. Instead default linking against system
+libraries is dynamic. The ndk-depends helps in finding the dependencies:
+
+localhost:armeabi-v7a floh$ ~/android-ndk-r9d/ndk-depends libCoreHello.so 
+libCoreHello.so
+libm.so
+liblog.so
+libdl.so
+libc.so
+libandroid.so
+libGLESv2.so
+libEGL.so
+
+This is basically the list of .so files which must be contained in the APK.
+After I copied these to the SDK project's lib directory, together with my
+libCoreHello.so. Update: These shared libs are not supposed to be packaged
+into the APK! Instead the standard system shared libraries which already exist
+on the device should be linked at startup.
+
+I finally saw the sweet, sweet ‘Hello World!’ showing up in the adb log!
+
+But I skipped one important part: so far I fixed everything manually, but of
+course I want automated Android batch builds, and without having those ugly
+Android skeleton project files in the git repository.
+
+To solve this I did a bit of cmake-fu:
+
+Instead of having the Android SDK project files committed into version
+control, I’m treating these as temporary build files.
+
+When cmake runs for an Android build target, it does the following additional
+steps:
+
+For each application target, a temporary Android SDK project is created in the
+build directory (basically the ‘android create project’ call described above):
+
+# call the android SDK tool to create a new project
+execute_process(COMMAND ${ANDROID_SDK_TOOL} create project
+                --path ${CMAKE_CURRENT_BINARY_DIR}/android
+                --target ${ANDROID_PLATFORM}
+                --name ${target}
+                --package com.oryol.${target}
+                --activity DummyActivity
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
+The output directory for the shared library linker step is redirected to the
+‘libs’ subdirectory of this skeleton project:
+
+# set the output directory for the .so files to point to the android project's
+'lib/[cpuarch] directory
+set(ANDROID_SO_OUTDIR ${CMAKE_CURRENT_BINARY_DIR}/android/libs/
+   ${ANDROID_NDK_CPU})
+set_target_properties(${target} PROPERTIES LIBRARY_OUTPUT_DIRECTORY
+   ${ANDROID_SO_OUTDIR})
+set_target_properties(${target} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_RELEASE
+   ${ANDROID_SO_OUTDIR})
+set_target_properties(${target} PROPERTIES LIBRARY_OUTPUT_DIRECTORY_DEBUG
+   ${ANDROID_SO_OUTDIR})
+
+The required system shared libraries are also copied there: (DON’T DO THIS,
+normally the system’s standard shared libraries should be used)
+
+# copy shared libraries over from the Android toolchain directory
+# FIXME: this should be automated as post-build-step by invoking the
+# ndk-depends command to find out the .so's, and copy them over
+file(COPY ${ANDROID_SYSROOT_LIB}/libm.so DESTINATION ${ANDROID_SO_OUTDIR})
+file(COPY ${ANDROID_SYSROOT_LIB}/liblog.so DESTINATION ${ANDROID_SO_OUTDIR})
+file(COPY ${ANDROID_SYSROOT_LIB}/libdl.so DESTINATION ${ANDROID_SO_OUTDIR})
+file(COPY ${ANDROID_SYSROOT_LIB}/libc.so DESTINATION ${ANDROID_SO_OUTDIR})
+file(COPY ${ANDROID_SYSROOT_LIB}/libandroid.so DESTINATION ${ANDROID_SO_OUTDIR})
+file(COPY ${ANDROID_SYSROOT_LIB}/libGLESv2.so DESTINATION ${ANDROID_SO_OUTDIR})
+file(COPY ${ANDROID_SYSROOT_LIB}/libEGL.so DESTINATION ${ANDROID_SO_OUTDIR})
+
+The default AndroidManifest.xml file is overwritten with a customized one:
+
+# override AndroidManifest.xml 
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/android/AndroidManifest.xml
+    "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\n"
+    "  package=\"com.oryol.${target}\"\n"
+    "  android:versionCode=\"1\"\n"
+    "  android:versionName=\"1.0\">\n"
+    "  <uses-sdk android:minSdkVersion=\"11\" android:targetSdkVersion=\"19\"/>\n"
+    "  <uses-feature android:glEsVersion=\"0x00020000\"></uses-feature>"
+    "  <application android:label=\"${target}\" android:hasCode=\"false\">\n"
+    "    <activity android:name=\"android.app.NativeActivity\"\n"
+    "      android:label=\"${target}\"\n"
+    "      android:configChanges=\"orientation|keyboardHidden\">\n"
+    "      <meta-data android:name=\"android.app.lib_name\" android:value=\"${target}\"/>\n"
+    "      <intent-filter>\n"
+    "        <action android:name=\"android.intent.action.MAIN\"/>\n"
+    "        <category android:name=\"android.intent.category.LAUNCHER\"/>\n"
+    "      </intent-filter>\n"
+    "    </activity>\n"
+    "  </application>\n"
+    "</manifest>\n")
+
+And finally, a custom build-step to invoke the ant-build tool on the temporary
+skeleton project to create the final APK:
+
+if ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    set(ANT_BUILD_TYPE "debug")
+else()
+    set(ANT_BUILD_TYPE "release")
+endif()
+add_custom_command(TARGET ${target} POST_BUILD COMMAND ${ANDROID_ANT}
+                   ${ANT_BUILD_TYPE} WORKING_DIRECTORY
+                   ${CMAKE_CURRENT_BINARY_DIR}/android)
+
+With all this in place, I can now do a:
+> ./oryol make CoreHello android-make-debug
+To compile and package a simple Hello World Android app!
+
+What’s currently missing is a simple wrapper to deploy and run an app on the
+device:
+> ./oryol deploy CoreHello
+> ./oryol run CoreHello
+
+These would be simple wrappers around the adb tool, later this should of
+course also work for iOS apps.
+
+Right now the Android build system only works on OSX and only for the ARM V7A
+instruction set, and there’s no proper Android port of the actual code yet,
+just a single log message in the CoreHello sample.
+
+Phew, that’s it! All this stuff is also available on github
+(https://github.com/floooh/oryol/tree/master/cmake).

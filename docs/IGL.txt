@@ -1,0 +1,30 @@
+-----------------------------------------------------------------------------
+Independent GL
+-----------------------------------------------------------------------------
+
+Depending on how OpenGL is linked its symbols (glClear, glDrawArrays, etc) can
+be either functions, or pointers to functions retrieved from a dynamic
+library.
+
+Android uses a mix of both methods. It statically links to an OpenGL wrapper
+library. This is done when you add -lGLESv2 to the Anroid.mk variable
+LOCAL_LDLIBS. In this case the symbols are functions that cannot be resolved
+to change its code.
+
+In the case of a dinamically linked OpenGL Desktop application the symbols are
+function pointers that can be assigned.
+
+To allow the same code to be run in both Desktop and Mobile the IGL struct
+defines an abstraction layer consisting in function pointers (like in a
+dinamically linked app), that can be assigned with ifdefs depending on the
+platform.
+
+Some OpenGL symbols can also point to unimplemented functions. This will
+effectively disable the feature in platforms that do not support it.
+
+Traditionally OpenGL Loading Libraries are used to load pointers to OpenGL
+functions at runtime in Desktop applications. These libraries include GLEW
+(OpenGL Extension Wrangler), GLee or glLoadGen. The documentation of one of
+those libraries has been included in glLoadGen.txt, it is interesting as it
+describes the different options available to do the loading and its tradeoffs.
+
