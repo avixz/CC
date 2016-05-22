@@ -1,0 +1,11 @@
+External Repositiories
+----------------------
+
+Currently external repositories are managed as git subtrees
+
+git subtree add --prefix src/glfw https://github.com/glfw/glfw.git 3.1.2 --squash
+
+The patches directory contains the necessary changes to integrate the original
+library. Those changes are out of the subtree directory on purpose.
+
+To compile apply the patches first.
