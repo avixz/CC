@@ -1,0 +1,13 @@
+Generate glfw3
+--------------
+
+cd glfw
+mkdir build
+cd build
+cmake ..
+
+Copy glfw/build/src/libglfw3.a to lib/platform/libglfw3.a
+Copy glfw/include/GLFW to include
+Copy gleq/gleq.h to include
+
+Apply gleq.patch

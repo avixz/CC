@@ -1,0 +1,20 @@
+--- ../gleq/gleq.h	2016-06-19 14:01:07.714832273 +0200
++++ ../include/gleq.h	2016-07-23 16:06:08.833736549 +0200
+@@ -67,7 +67,7 @@
+ 
+ } GLEQtype;
+ 
+-typedef struct
++typedef struct GLEQevent
+ {
+     GLEQtype type;
+     GLFWwindow* window;
+@@ -271,7 +271,7 @@
+     GLEQevent* event = gleqNewEvent();
+     event->type = GLEQ_FILE_DROPPED;
+     event->window = window;
+-    event->file.paths = malloc(count * sizeof(char*));
++    event->file.paths = (char**)malloc(count * sizeof(char*));
+     event->file.count = count;
+ 
+     while (count--)
