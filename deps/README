@@ -1,13 +1,17 @@
-Generate glfw3
---------------
+Apply patches
+-------------
+patch -p2 -F0 < patches/gleq.patch
 
+Generate dependencies
+---------------------
 cd glfw
 mkdir build
 cd build
 cmake ..
 
-Copy glfw/build/src/libglfw3.a to lib/platform/libglfw3.a
-Copy glfw/include/GLFW to include
-Copy gleq/gleq.h to include
+Copy libraries and headers
+--------------------------
+cp glfw/build/src/libglfw3.a lib/platform/libglfw3.a
+cp -r glfw/include/GLFW include
+cp gleq/gleq.h include
 
-Apply gleq.patch

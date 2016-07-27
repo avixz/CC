@@ -1,6 +1,8 @@
---- ../gleq/gleq.h	2016-06-19 14:01:07.714832273 +0200
-+++ ../include/gleq.h	2016-07-23 16:06:08.833736549 +0200
-@@ -67,7 +67,7 @@
+diff --git a/deps/gleq/gleq.h b/deps/gleq/gleq.h
+index 1e02f41..a8489d9 100644
+--- a/deps/gleq/gleq.h
++++ b/deps/gleq/gleq.h
+@@ -67,7 +67,7 @@ typedef enum
  
  } GLEQtype;
  
@@ -9,7 +11,7 @@
  {
      GLEQtype type;
      GLFWwindow* window;
-@@ -271,7 +271,7 @@
+@@ -271,7 +271,7 @@ static void gleqFileDropCallback(GLFWwindow* window, int count, const char** pat
      GLEQevent* event = gleqNewEvent();
      event->type = GLEQ_FILE_DROPPED;
      event->window = window;
