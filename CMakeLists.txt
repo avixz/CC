@@ -7,6 +7,18 @@ project(CC)
 
 set(CC_VERSION_MAJOR 0)
 set(CC_VERSION_MINOR 3)
+set(CMAKE_CXX_FLAGS_DEBUG "-g")
+
+# Platform
+if ("${CC_PLATFORM}" STREQUAL "LINUX")
+  set(CMAKE_CXX_FLAGS "-DLINUX")
+elseif ("${CC_PLATFORM}" STREQUAL "EMSC")
+  set(CMAKE_CXX_FLAGS "-DEMSC")
+elseif ("${CC_PLATFORM}" STREQUAL "WINDOWS")
+  set(CMAKE_CXX_FLAGS "-DWINDOWS")
+else ()
+  message(FATAL_ERROR "Platform not supported")
+endif()
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/include

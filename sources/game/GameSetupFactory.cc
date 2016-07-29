@@ -15,7 +15,7 @@ namespace CC
   //-----------------------------------------------------------------------
   ILowLevelGameSetup* GameSetupFactory::CreateGameSetup()
   {
-#if LINUX
+#ifdef LINUX
     return new LinuxGameSetup();
 #elif EMSC
     return new EmscGameSetup();
