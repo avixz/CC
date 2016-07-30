@@ -9,6 +9,9 @@
 namespace CC
 {
   // Forward declarations
+  class Input;
+  class System;
+  class Graphics;
   class ILowLevelSystem;
   class LowLevelGraphicsGLFW;
   class ILowLevelInput;
@@ -20,6 +23,10 @@ namespace CC
     public:
       LowLevelGameSetupLinux();
       ~LowLevelGameSetupLinux();
+
+      Input* CreateInput();
+      System* CreateSystem();
+      Graphics* CreateGraphics();
 
     private:
       ILowLevelSystem* m_lowLevelSystem;

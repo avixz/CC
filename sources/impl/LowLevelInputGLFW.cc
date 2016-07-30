@@ -39,7 +39,7 @@ namespace CC
   }
 
   //---------------------------------------------------------------------------
-  IKeyboard* CreateKeyboard()
+  IKeyboard* LowLevelInputGLFW::CreateKeyboard()
   {
     // Not implemented
     return NULL;

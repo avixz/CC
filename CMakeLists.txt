@@ -7,7 +7,6 @@ project(CC)
 
 set(CC_VERSION_MAJOR 0)
 set(CC_VERSION_MINOR 3)
-set(CMAKE_CXX_FLAGS_DEBUG "-g")
 
 # Platform
 if ("${CC_PLATFORM}" STREQUAL "LINUX")

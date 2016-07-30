@@ -22,6 +22,8 @@ namespace CC
   {
     public:
 
+      Input(ILowLevelInput* lowLevelInput);
+
       /** Updates the input, called by Game
        */
       void Update(float timeStep);

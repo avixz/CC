@@ -9,6 +9,12 @@
 namespace CC
 {
   //---------------------------------------------------------------------------
+  Input::Input(ILowLevelInput* lowLevelInput) :
+    m_lowLevelInput(lowLevelInput)
+  {
+  }
+
+  //---------------------------------------------------------------------------
   void Input::Update(float timeStep)
   {
     m_lowLevelInput->BeginInputUpdate();

@@ -8,6 +8,11 @@
 namespace CC
 {
   //---------------------------------------------------------------------------
+  LowLevelGraphicsGLFW::LowLevelGraphicsGLFW()
+  {
+  }
+
+  //---------------------------------------------------------------------------
   bool LowLevelGraphicsGLFW::Init(int width, int height,
       const std::string& windowCaption)
   {

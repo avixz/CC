@@ -13,8 +13,6 @@ namespace CC
   class ILowLevelGraphics
   {
     public:
-      virtual ~ILowLevelGraphics(){};
-
-      virtual bool Init(int width, int height, const std::string& windowCaption);
+      virtual bool Init(int width, int height, const std::string& windowCaption) = 0;
   };
 }

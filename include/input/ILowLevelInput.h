@@ -13,7 +13,6 @@ namespace CC
   class ILowLevelInput
   {
     public:
-      virtual ~ILowLevelInput(){};
 
       /** Called by Input
        */

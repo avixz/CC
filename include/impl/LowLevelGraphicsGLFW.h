@@ -13,6 +13,7 @@ namespace CC
   class LowLevelGraphicsGLFW : public ILowLevelGraphics
   {
     public:
+      LowLevelGraphicsGLFW();
       bool Init(int width, int height, const std::string& windowCaption);
       void SetupGL();
       GLFWwindow* getWindow();

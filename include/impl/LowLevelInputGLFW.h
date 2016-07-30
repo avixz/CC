@@ -20,7 +20,6 @@ namespace CC
   {
     public:
       LowLevelInputGLFW(LowLevelGraphicsGLFW* lowLevelGraphics);
-      ~LowLevelInputGLFW();
 
       void BeginInputUpdate();
       void EndInputUpdate();
