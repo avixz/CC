@@ -12,4 +12,10 @@ namespace CC
     m_lowLevelGraphics(lowLevelGraphics)
   {
   }
+
+  //-------------------------------------------------------------------------
+  bool Graphics::Init(int width, int height, const std::string& windowCaption)
+  {
+    m_lowLevelGraphics->Init(width, height, windowCaption);
+  }
 }

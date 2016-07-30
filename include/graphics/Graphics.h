@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <string>
+
 namespace CC
 {
   class ILowLevelGraphics;
@@ -13,6 +15,8 @@ namespace CC
     public:
 
       Graphics(ILowLevelGraphics* lowLevelGraphics);
+
+      bool Init(int width, int height, const std::string& windowCaption);
 
     private:
 
