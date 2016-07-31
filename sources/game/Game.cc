@@ -4,6 +4,9 @@
 
 #include "game/Game.h"
 
+//TODO: Remove this
+#include "input/IKeyboard.h"
+
 #include "game/ILowLevelGameSetup.h"
 
 namespace CC
@@ -19,10 +22,23 @@ namespace CC
   {
     m_lowLeveGameSetup = lowLevelGameSetup;
 
-    m_graphics = lowLevelGameSetup->CreateGraphics();
     m_system = lowLevelGameSetup->CreateSystem();
-    m_input = lowLevelGameSetup->CreateInput();
 
+    m_graphics = lowLevelGameSetup->CreateGraphics();
     m_graphics->Init(800, 600, "Hello World!");
+
+    m_input = lowLevelGameSetup->CreateInput();
+  }
+
+  //-------------------------------------------------------------------------
+  void Game::Run()
+  {
+    bool exit = false;
+
+    while (!exit)
+    {
+      m_input->Update(0);
+      exit = m_input->m_keyboard->KeyIsPressed();
+    }
   }
 }

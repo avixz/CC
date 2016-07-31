@@ -14,7 +14,7 @@ namespace CC
   class Graphics;
   class ILowLevelSystem;
   class LowLevelGraphicsGLFW;
-  class ILowLevelInput;
+  class LowLevelInputGLFW;
 
   /** LowLevelGameSetupLinux
    */
@@ -31,6 +31,6 @@ namespace CC
     private:
       ILowLevelSystem* m_lowLevelSystem;
       LowLevelGraphicsGLFW* m_lowLevelGraphics;
-      ILowLevelInput* m_lowLevelInput;
+      LowLevelInputGLFW* m_lowLevelInput;
   };
 }

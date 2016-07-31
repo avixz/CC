@@ -31,5 +31,9 @@ namespace CC
     private:
       ILowLevelInput* m_lowLevelInput;
       InputDeviceListType m_listInputDevices;
+
+    //TODO: Make this private and access it properly
+    public:
+      IKeyboard* m_keyboard;
   };
 }

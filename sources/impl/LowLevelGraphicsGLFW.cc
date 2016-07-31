@@ -28,7 +28,7 @@ namespace CC
       glfwTerminate();
       return false;
     }
-    //glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(m_window);
 
     SetupGL();
   }

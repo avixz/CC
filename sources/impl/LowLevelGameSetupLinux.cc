@@ -17,7 +17,7 @@ namespace CC
   {
     m_lowLevelSystem = new LowLevelSystemLinux();
     m_lowLevelGraphics = new LowLevelGraphicsGLFW();
-    m_lowLevelInput = new LowLevelInputGLFW(m_lowLevelGraphics);
+    m_lowLevelInput = new LowLevelInputGLFW();
   }
 
   //---------------------------------------------------------------------------
@@ -31,6 +31,7 @@ namespace CC
   //---------------------------------------------------------------------------
   Input* LowLevelGameSetupLinux::CreateInput()
   {
+    m_lowLevelInput->Init(m_lowLevelGraphics);
     return new Input(m_lowLevelInput);
   }
 

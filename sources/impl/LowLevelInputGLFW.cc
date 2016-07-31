@@ -2,21 +2,22 @@
 // LowLevelInputGLFW.cc
 //---------------------------------------------------------------------------
 
-#include "GLFW/glfw3.h"
-
-#define GLEQ_IMPLEMENTATION
-#include "gleq.h"
-
 #include "impl/LowLevelGraphicsGLFW.h"
 #include "input/IKeyboard.h"
+#include "impl/KeyboardGLFW.h"
 #include "impl/LowLevelInputGLFW.h"
 
 namespace CC
 {
   //---------------------------------------------------------------------------
-  LowLevelInputGLFW::LowLevelInputGLFW(LowLevelGraphicsGLFW* lowLevelGraphics) :
-    m_lowLevelGraphics(lowLevelGraphics)
+  LowLevelInputGLFW::LowLevelInputGLFW()
   {
+  }
+
+  //---------------------------------------------------------------------------
+  void LowLevelInputGLFW::Init(LowLevelGraphicsGLFW* lowLevelGraphics)
+  {
+    m_lowLevelGraphics = lowLevelGraphics;
     gleqTrackWindow(lowLevelGraphics->getWindow());
   }
 
@@ -41,7 +42,6 @@ namespace CC
   //---------------------------------------------------------------------------
   IKeyboard* LowLevelInputGLFW::CreateKeyboard()
   {
-    // Not implemented
-    return NULL;
+    return (new KeyboardGLFW(this));
   }
 }

@@ -15,5 +15,5 @@ int ccMain()
   // Init game
   ILowLevelGameSetup* gameSetup = setupFactory->CreateGameSetup();
   Game* game = new Game(gameSetup, 800, 600);
-  sleep(5);
+  game->Run();
 }

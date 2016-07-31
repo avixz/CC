@@ -20,6 +20,8 @@ namespace CC
     public:
       Game(ILowLevelGameSetup* lowLevelGameSetup, int width, int height);
 
+      void Run();
+
     private:
       void GameInit(ILowLevelGameSetup* lowLevelGameSetup);
 

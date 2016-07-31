@@ -4,14 +4,16 @@
 
 #pragma once
 
+#include "GLFW/glfw3.h"
+#include "gleq.h"
+
 #include <list>
 #include "input/ILowLevelInput.h"
-
-struct GLEQevent;
 
 namespace CC
 {
   class LowLevelGraphicsGLFW;
+  class ILowLevelGraphics;
   class IKeyboard;
 
   /** LowLevelInputGLFW
@@ -19,8 +21,9 @@ namespace CC
   class LowLevelInputGLFW : public ILowLevelInput
   {
     public:
-      LowLevelInputGLFW(LowLevelGraphicsGLFW* lowLevelGraphics);
+      LowLevelInputGLFW();
 
+      void Init(LowLevelGraphicsGLFW* lowLevelGraphics);
       void BeginInputUpdate();
       void EndInputUpdate();
       IKeyboard* CreateKeyboard();

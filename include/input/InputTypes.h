@@ -1,16 +1,25 @@
 //---------------------------------------------------------------------------
-// IKeyboard.h
+// InputTypes.h
 //---------------------------------------------------------------------------
 
 #pragma once
 
-#include "input/IInputDevice.h"
-
 namespace CC
 {
-  class IKeyboard : public IInputDevice
+  enum ccKey
   {
-    public:
-      virtual bool KeyIsPressed() = 0;
+    ccKey_ESCAPE,
+    ccKey_RETURN,
+    ccKey_LastEnum
+  };
+
+  struct KeyPress
+  {
+    KeyPress(ccKey key) :
+      m_key(key)
+    {
+    }
+
+    ccKey m_key;
   };
 }
