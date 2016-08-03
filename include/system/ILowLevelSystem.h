@@ -6,6 +6,8 @@
 
 namespace CC
 {
+  extern void Log(const char* fmt, ...);
+
   class ILowLevelSystem
   {
   };
