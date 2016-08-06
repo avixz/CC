@@ -4,6 +4,7 @@
 
 #include <cstdio>
 #include <cstdarg>
+#include <sys/time.h>
 #include "impl/LowLevelSystemLinux.h"
 
 using namespace std;
@@ -18,6 +19,16 @@ int main(int argc, char *argv[])
 
 namespace CC
 {
+  unsigned long GetApplicationTime()
+  {
+    static clock_t zeroClock = clock();
+    clock_t newClock = clock();
+
+    // Return time in milliseconds since first frame
+    return (unsigned long)((float)(newClock-zeroClock) /
+        ((float)CLOCKS_PER_SEC/1000.0));
+  }
+
   static LogWriter logWriter("cc.log");
 
   //-------------------------------------------------------------------------

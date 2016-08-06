@@ -42,9 +42,18 @@ namespace CC
   void Game::Run()
   {
     bool exit = false;
+    unsigned int time = GetApplicationTime();
 
     while (!exit)
     {
+      unsigned int oldTime = time;
+      time = GetApplicationTime();
+      unsigned int delta = time - oldTime;
+
+      Log("%u ms\n", delta);
+
+      for (int i = 0; i < 1000000; ++i);
+
       m_input->Update(0);
       exit = m_input->m_keyboard->KeyIsPressed();
     }
