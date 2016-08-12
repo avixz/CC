@@ -5,6 +5,7 @@
 #include "game/GameSetupFactory.h"
 #include "game/ILowLevelGameSetup.h"
 #include "impl/LowLevelGameSetupLinux.h"
+#include "impl/LowLevelGameSetupWindows.h"
 
 namespace CC
 {
@@ -20,6 +21,8 @@ namespace CC
     return new LowLevelGameSetupLinux();
 #elif EMSC
     return new LowLevelGameSetupEmsc();
+#elif WINDOWS
+    return new LowLevelGameSetupWindows();
 #endif
   }
 }

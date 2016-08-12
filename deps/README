@@ -1,5 +1,9 @@
 Apply patches
 -------------
+
+Linux
+-----
+
 patch -p2 -F0 < patches/gleq.patch
 
 Generate dependencies
@@ -11,7 +15,25 @@ cmake ..
 
 Copy libraries and headers
 --------------------------
-cp glfw/build/src/libglfw3.a lib/platform/libglfw3.a
+cp glfw/build/src/libglfw3.a lib/linux
 cp -r glfw/include/GLFW include
 cp gleq/gleq.h include
 
+Windows
+-------
+
+In the windows explorer open the context menu for the file patches\gleq.patch
+Select the option "Review/apply single patch..." (let tortoise find the correct path)
+
+Generate dependencies
+---------------------
+cd glfw
+mkdir build
+cd build
+cmake ..
+
+Copy libraries and headers
+--------------------------
+copy glfw\build\src\Debug\glfw3.lib lib\windows
+robocopy /e glfw\include\GLFW include\GLFW
+copy gleq\gleq.h include

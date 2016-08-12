@@ -16,6 +16,6 @@ namespace CC
   //-------------------------------------------------------------------------
   bool Graphics::Init(int width, int height, const std::string& windowCaption)
   {
-    m_lowLevelGraphics->Init(width, height, windowCaption);
+    return m_lowLevelGraphics->Init(width, height, windowCaption);
   }
 }
