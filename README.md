@@ -7,4 +7,4 @@
 #Build the library
 mkdir build
 cd build
-cmake -DCC_PLATFORM=LINUX -DCMAKE_BUILD_TYPE=Debug ..
+cmake -DCC_PLATFORM=<LINUX|WINDOWS> -DCMAKE_BUILD_TYPE=<Debug|Release> ..

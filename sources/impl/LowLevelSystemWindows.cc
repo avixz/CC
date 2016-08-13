@@ -18,10 +18,23 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR	lpCmdLine
 
 namespace CC
 {
+    //-------------------------------------------------------------------------
     unsigned long GetApplicationTime()
     {
-        // TODO: Implement this method
-        return 0;
+        static LARGE_INTEGER frequency = { 0, 0 };
+        static LARGE_INTEGER zeroTime = { 0, 0 };
+        LARGE_INTEGER newTime;
+
+        if (!zeroTime.QuadPart)
+        {
+            QueryPerformanceFrequency(&frequency);
+            QueryPerformanceCounter(&zeroTime);
+        }
+        QueryPerformanceCounter(&newTime);
+
+        // Return time in milliseconds since first frame
+        return (unsigned long)((newTime.QuadPart - zeroTime.QuadPart) /
+            (frequency.QuadPart / 1000.0));
     }
 
     static LogWriter logWriter("cc.log");
