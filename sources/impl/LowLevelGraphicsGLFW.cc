@@ -31,6 +31,8 @@ namespace CC
     glfwMakeContextCurrent(m_window);
 
     SetupGL();
+
+    glfwSwapBuffers(m_window);
   }
 
   //---------------------------------------------------------------------------
