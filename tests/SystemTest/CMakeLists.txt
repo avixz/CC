@@ -36,7 +36,6 @@ elseif ("${CC_PLATFORM}" STREQUAL "EMSC")
   set(EXE_SUFFIX ".html")
   link_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../../build
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../deps/lib/emsc
     )
   set(platformLibraries
     ""
