@@ -46,25 +46,10 @@ Apply patches
 -------------
 patch -p2 -F0 < patches/gleq.patch
 
-Generate dependencies
----------------------
-cd glfw
-mkdir build
-cd build
-cmake -DCMAKE_TOOLCHAIN_FILE=../../../deps/sdks/linux/emscriptenToolchain.cmake ..
-
-Copy libraries and headers
---------------------------
-cp glfw/build/src/libglfw3.a lib/emsc
+Copy headers (glfw3 is a system library in emscriten)
+-----------------------------------------------------
 cp -r glfw/include/GLFW include
 cp gleq/gleq.h include
-
-Generate dependencies
----------------------
-cd glfw
-mkdir build
-cd build
-cmake ..
 
 Activate Emscripten sdk
 -----------------------
