@@ -13,6 +13,7 @@ include_directories(
 # FIXME: Code duplication
 if ("${CC_PLATFORM}" STREQUAL "LINUX")
   set(CMAKE_CXX_FLAGS "-DLINUX")
+  set(EXE_SUFFIX "")
   link_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../../build
     ${CMAKE_CURRENT_SOURCE_DIR}/../../deps/lib/linux
@@ -32,9 +33,19 @@ if ("${CC_PLATFORM}" STREQUAL "LINUX")
 
 elseif ("${CC_PLATFORM}" STREQUAL "EMSC")
   set(CMAKE_CXX_FLAGS "-DEMSC")
+  set(EXE_SUFFIX ".html")
+  link_directories(
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../build
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../deps/lib/emsc
+    )
+  set(platformLibraries
+    ""
+    )
+  set(platformFlags "")
 
 elseif ("${CC_PLATFORM}" STREQUAL "WINDOWS")
   set(CMAKE_CXX_FLAGS "-DWINDOWS")
+  set(EXE_SUFFIX "")
   link_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/../../build/Debug
     ${CMAKE_CURRENT_SOURCE_DIR}/../../deps/lib/windows
@@ -54,6 +65,6 @@ file(GLOB_RECURSE all_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/*.cc
   )
 
-add_executable(SystemTest ${platformFlags} ${all_sources})
+add_executable(SystemTest${EXE_SUFFIX} ${platformFlags} ${all_sources})
 
-target_link_libraries(SystemTest CC glfw3 ${platformLibraries})
+target_link_libraries(SystemTest${EXE_SUFFIX} CC glfw3 ${platformLibraries})

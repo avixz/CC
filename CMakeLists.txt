@@ -16,16 +16,22 @@ file(GLOB_RECURSE all_sources
 if ("${CC_PLATFORM}" STREQUAL "LINUX")
   file(GLOB_RECURSE sourcesToRemove
     *Windows.cc
+    *Emsc.cc
     )
   set(CMAKE_CXX_FLAGS "-DLINUX")
 
 elseif ("${CC_PLATFORM}" STREQUAL "EMSC")
+  file(GLOB_RECURSE sourcesToRemove
+    *Windows.cc
+    *Linux.cc
+    )
   set(CMAKE_CXX_FLAGS "-DEMSC")
 
 elseif ("${CC_PLATFORM}" STREQUAL "WINDOWS")
   set(CMAKE_CXX_FLAGS "-DWINDOWS")
   file(GLOB_RECURSE sourcesToRemove
     *Linux.cc
+    *Emsc.cc
     )
 
 else ()
@@ -42,5 +48,3 @@ include_directories(
 
 add_library(CC STATIC ${all_sources})
 
-add_library(glfw STATIC IMPORTED)
-set_target_properties(glfw PROPERTIES IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/../deps/lib/linux/libglfw3.a)

@@ -1,9 +1,8 @@
+Linux
+----------------------------------------------------------------------------
+
 Apply patches
 -------------
-
-Linux
------
-
 patch -p2 -F0 < patches/gleq.patch
 
 Generate dependencies
@@ -20,8 +19,10 @@ cp -r glfw/include/GLFW include
 cp gleq/gleq.h include
 
 Windows
--------
+----------------------------------------------------------------------------
 
+Apply patches
+-------------
 In the windows explorer open the context menu for the file patches\gleq.patch
 Select the option "Review/apply single patch..." (let tortoise find the correct path)
 
@@ -37,3 +38,39 @@ Copy libraries and headers
 copy glfw\build\src\Debug\glfw3.lib lib\windows
 robocopy /e glfw\include\GLFW include\GLFW
 copy gleq\gleq.h include
+
+Emscripten (on Linux)
+----------------------------------------------------------------------------
+
+Apply patches
+-------------
+patch -p2 -F0 < patches/gleq.patch
+
+Generate dependencies
+---------------------
+cd glfw
+mkdir build
+cd build
+cmake -DCMAKE_TOOLCHAIN_FILE=../../../deps/sdks/linux/emscriptenToolchain.cmake ..
+
+Copy libraries and headers
+--------------------------
+cp glfw/build/src/libglfw3.a lib/emsc
+cp -r glfw/include/GLFW include
+cp gleq/gleq.h include
+
+Generate dependencies
+---------------------
+cd glfw
+mkdir build
+cd build
+cmake ..
+
+Activate Emscripten sdk
+-----------------------
+cd sdks/linux
+tar zxvf emsdk-portable.tar.gz
+cd emsdk_portable
+./emsdk update
+./emsdk install latest
+./emsdk activate latest

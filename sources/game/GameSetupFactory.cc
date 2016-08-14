@@ -4,6 +4,7 @@
 
 #include "game/GameSetupFactory.h"
 #include "game/ILowLevelGameSetup.h"
+#include "impl/LowLevelGameSetupEmsc.h"
 #include "impl/LowLevelGameSetupLinux.h"
 #include "impl/LowLevelGameSetupWindows.h"
 
