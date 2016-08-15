@@ -20,7 +20,7 @@ namespace CC
     {
       return false;
     }
-    m_window = glfwCreateWindow(width, height, windowCaption.c_str(),
+    m_window = glfwCreateWindow(width, height, "asdf",
         NULL, NULL);
 
     if (!m_window)
@@ -33,6 +33,8 @@ namespace CC
     SetupGL();
 
     glfwSwapBuffers(m_window);
+
+    return true;
   }
 
   //---------------------------------------------------------------------------
