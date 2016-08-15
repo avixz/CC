@@ -20,6 +20,7 @@ if ("${CC_PLATFORM}" STREQUAL "LINUX")
     )
   #FIXME: Is linking with all these libraries necessary?
   set(platformLibraries
+    "glfw3"
     "X11"
     "Xrandr"
     "Xi"
@@ -38,7 +39,7 @@ elseif ("${CC_PLATFORM}" STREQUAL "EMSC")
     ${CMAKE_CURRENT_SOURCE_DIR}/../../build
     )
   set(platformLibraries
-    ""
+    "glfw"
     )
   set(platformFlags "")
 
@@ -51,6 +52,7 @@ elseif ("${CC_PLATFORM}" STREQUAL "WINDOWS")
     )
   set(platformLibraries
     "OpenGL32"
+    "glfw3"
     )
   set(platformFlags
     "WIN32"
@@ -66,4 +68,4 @@ file(GLOB_RECURSE all_sources
 
 add_executable(SystemTest${EXE_SUFFIX} ${platformFlags} ${all_sources})
 
-target_link_libraries(SystemTest${EXE_SUFFIX} CC glfw3 ${platformLibraries})
+target_link_libraries(SystemTest${EXE_SUFFIX} CC ${platformLibraries})
