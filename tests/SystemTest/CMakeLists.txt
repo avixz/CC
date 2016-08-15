@@ -39,7 +39,7 @@ elseif ("${CC_PLATFORM}" STREQUAL "EMSC")
     ${CMAKE_CURRENT_SOURCE_DIR}/../../build
     )
   set(platformLibraries
-    "glfw"
+    ""
     )
   set(platformFlags "")
 

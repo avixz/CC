@@ -1,0 +1,1 @@
+- Functions must return a value to avoid exceptions (e.g bool functions must always return true or false)

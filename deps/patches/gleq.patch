@@ -1,5 +1,5 @@
 diff --git a/deps/gleq/gleq.h b/deps/gleq/gleq.h
-index 1e02f41..a8489d9 100644
+index 1e02f41..7ffa53a 100644
 --- a/deps/gleq/gleq.h
 +++ b/deps/gleq/gleq.h
 @@ -67,7 +67,7 @@ typedef enum
@@ -20,3 +20,14 @@ index 1e02f41..a8489d9 100644
      event->file.count = count;
  
      while (count--)
+@@ -292,8 +292,10 @@ void gleqTrackWindow(GLFWwindow* window)
+     glfwSetCursorEnterCallback(window, gleqCursorEnterCallback);
+     glfwSetScrollCallback(window, gleqScrollCallback);
+     glfwSetKeyCallback(window, gleqKeyCallback);
++#ifndef EMSC
+     glfwSetCharModsCallback(window, gleqCharModsCallback);
+     glfwSetDropCallback(window, gleqFileDropCallback);
++#endif
+ }
+ 
+ int gleqNextEvent(GLEQevent* event)

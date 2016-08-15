@@ -20,7 +20,7 @@ namespace CC
     {
       return false;
     }
-    m_window = glfwCreateWindow(width, height, "asdf",
+    m_window = glfwCreateWindow(width, height, windowCaption.c_str(),
         NULL, NULL);
 
     if (!m_window)

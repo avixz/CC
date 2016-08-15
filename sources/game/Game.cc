@@ -4,6 +4,10 @@
 
 
 //TODO: Remove this
+#ifdef EMSC
+#include <emscripten/emscripten.h>
+void doFrame() {};
+#endif
 #include "input/IKeyboard.h"
 
 #include "game/ILowLevelGameSetup.h"
@@ -44,6 +48,9 @@ namespace CC
     bool exit = false;
     unsigned int time = GetApplicationTime();
 
+#ifdef EMSC
+    emscripten_set_main_loop(doFrame, 0, 1);
+#else
     while (!exit)
     {
       unsigned int oldTime = time;
@@ -57,5 +64,6 @@ namespace CC
       m_input->Update(0);
       exit = m_input->m_keyboard->KeyIsPressed();
     }
+#endif
   }
 }
