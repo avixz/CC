@@ -11,6 +11,8 @@ cd glfw
 mkdir build
 cd build
 cmake ..
+make
+cd ../../
 
 Copy libraries and headers
 --------------------------
@@ -32,6 +34,7 @@ cd glfw
 mkdir build
 cd build
 cmake ..
+Build Solution with Visual Studio
 
 Copy libraries and headers
 --------------------------
@@ -46,8 +49,8 @@ Apply patches
 -------------
 patch -p2 -F0 < patches/gleq.patch
 
-Copy headers (glfw3 is a system library in emscriten)
------------------------------------------------------
+Copy only headers (glfw3 is a system library in emscriten)
+----------------------------------------------------------
 cp -r glfw/include/GLFW include
 cp gleq/gleq.h include
 
