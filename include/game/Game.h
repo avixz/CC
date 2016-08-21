@@ -12,6 +12,7 @@ namespace CC
   class Graphics;
   class System;
   class Input;
+  class Updater;
 
   /** Game
    */
@@ -21,6 +22,9 @@ namespace CC
       Game(ILowLevelGameSetup* lowLevelGameSetup, int width, int height);
 
       void Run();
+      void Exit();
+      Updater* GetUpdater();
+      Input* GetInput();
 
     private:
       void GameInit(ILowLevelGameSetup* lowLevelGameSetup);
@@ -29,5 +33,7 @@ namespace CC
       Graphics* m_graphics;
       System* m_system;
       Input* m_input;
+      Updater* m_updater;
+      bool m_exit;
   };
 }

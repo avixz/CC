@@ -11,6 +11,8 @@ namespace CC
   class IUpdateable
   {
     public:
-      virtual void Update(float timeStep){}
+      virtual void OnStart(){}
+      virtual void Update(){}
+      virtual void OnExit(){}
   };
 }

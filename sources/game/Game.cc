@@ -10,6 +10,7 @@ void doFrame() {};
 #endif
 #include "input/IKeyboard.h"
 
+#include "game/Updater.h"
 #include "game/ILowLevelGameSetup.h"
 #include "system/ILowLevelSystem.h"
 
@@ -18,7 +19,8 @@ void doFrame() {};
 namespace CC
 {
   //-------------------------------------------------------------------------
-  Game::Game(ILowLevelGameSetup* lowLevelGameSetup, int width, int height)
+  Game::Game(ILowLevelGameSetup* lowLevelGameSetup, int width, int height) :
+    m_exit(false)
   {
     GameInit(lowLevelGameSetup);
   }
@@ -40,6 +42,10 @@ namespace CC
 
     Log(" Creating input module\n");
     m_input = lowLevelGameSetup->CreateInput();
+
+    Log(" Adding engine updates\n");
+    m_updater = new Updater();
+    m_updater->AddUpdate(m_input);
   }
 
   //-------------------------------------------------------------------------
@@ -51,7 +57,7 @@ namespace CC
 #ifdef EMSC
     emscripten_set_main_loop(doFrame, 0, 1);
 #else
-    while (!exit)
+    while (!m_exit)
     {
       unsigned int oldTime = time;
       time = GetApplicationTime();
@@ -61,9 +67,26 @@ namespace CC
 
       for (int i = 0; i < 1000000; ++i);
 
-      m_input->Update(0);
-      exit = m_input->m_keyboard->KeyIsPressed();
+      m_updater->Update();
     }
 #endif
+  }
+
+  //-------------------------------------------------------------------------
+  void Game::Exit()
+  {
+    m_exit = true;
+  }
+
+  //-------------------------------------------------------------------------
+  Updater* Game::GetUpdater()
+  {
+    return m_updater;
+  }
+
+  //-------------------------------------------------------------------------
+  Input* Game::GetInput()
+  {
+    return m_input;
   }
 }

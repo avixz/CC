@@ -14,6 +14,8 @@ namespace CC
   KeyboardGLFW::KeyboardGLFW(LowLevelInputGLFW* lowLeveInputGLFW) :
     m_lowLevelInputGLFW(lowLeveInputGLFW)
   {
+    m_keyArray.resize(ccKey_LastEnum);
+    ClearKeyList();
   }
 
   //-------------------------------------------------------------------------
@@ -31,14 +33,43 @@ namespace CC
       {
         continue;
       }
-      //TODO: Capture the key info
-      m_listKeysPressed.push_back(KeyPress(ccKey()));
+
+      // Capture the key info
+      ccKey key = GLEQToKey(event->key.key);
+      m_keyArray[key] = (event->type == GLEQ_KEY_PRESSED);
+
+      if (event->type == GLEQ_KEY_PRESSED)
+      {
+        m_listKeysPressed.push_back(KeyPress(key));
+      }
     }
+  }
+
+  //-------------------------------------------------------------------------
+  ccKey KeyboardGLFW::GLEQToKey(int key)
+  {
+    switch(key)
+    {
+      case GLFW_KEY_ESCAPE: return ccKey_ESCAPE;
+    }
+    return ccKey_NONE;
   }
 
   //-------------------------------------------------------------------------
   bool KeyboardGLFW::KeyIsPressed()
   {
     return m_listKeysPressed.empty() == false;
+  }
+
+  //-------------------------------------------------------------------------
+  bool KeyboardGLFW::KeyIsDown(ccKey key)
+  {
+    return m_keyArray[key];
+  }
+
+  //-------------------------------------------------------------------------
+  void KeyboardGLFW::ClearKeyList()
+  {
+    m_keyArray.assign(m_keyArray.size(), false);
   }
 }

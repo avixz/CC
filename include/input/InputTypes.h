@@ -10,6 +10,7 @@ namespace CC
   {
     ccKey_ESCAPE,
     ccKey_RETURN,
+    ccKey_NONE,
     ccKey_LastEnum
   };
 

@@ -5,6 +5,8 @@
 #pragma once
 
 #include <list>
+#include <map>
+#include <string>
 #include "game/IUpdateable.h"
 
 namespace CC
@@ -12,9 +14,12 @@ namespace CC
   class IKeyboard;
   class ILowLevelInput;
   class IInputDevice;
+  class IAction;
 
   typedef std::list<IInputDevice*> InputDeviceListType;
   typedef std::list<IInputDevice*>::iterator InputDeviceListIterator;
+  typedef std::map<std::string, IAction*> ActionMapType;
+  typedef std::map<std::string, IAction*>::iterator ActionMapIterator;
 
   /** Input
    */
@@ -26,14 +31,15 @@ namespace CC
 
       /** Updates the input, called by Game
        */
-      void Update(float timeStep);
+      void Update();
+      bool BecameTriggered(std::string action);
+      IKeyboard* GetKeyboard();
+      void AddAction(IAction* action);
 
     private:
       ILowLevelInput* m_lowLevelInput;
       InputDeviceListType m_listInputDevices;
-
-    //TODO: Make this private and access it properly
-    public:
+      ActionMapType m_actions;
       IKeyboard* m_keyboard;
   };
 }
