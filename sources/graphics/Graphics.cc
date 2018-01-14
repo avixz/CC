@@ -18,4 +18,10 @@ namespace CC
   {
     return m_lowLevelGraphics->Init(width, height, windowCaption);
   }
+
+  //-------------------------------------------------------------------------
+  ILowLevelGraphics* Graphics::GetLowLevel()
+  {
+    return m_lowLevelGraphics;
+  }
 }

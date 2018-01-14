@@ -89,4 +89,10 @@ namespace CC
   {
     return m_input;
   }
+
+  //-------------------------------------------------------------------------
+  Graphics* Game::GetGraphics()
+  {
+    return m_graphics;
+  }
 }

@@ -3,6 +3,7 @@
 //---------------------------------------------------------------------------
 
 #include <string>
+#include "impl/VertexBufferVBO.h"
 #include "impl/LowLevelGraphicsGLFW.h"
 
 namespace CC
@@ -20,6 +21,7 @@ namespace CC
     {
       return false;
     }
+    //glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
     m_window = glfwCreateWindow(width, height, windowCaption.c_str(),
         NULL, NULL);
 
@@ -28,13 +30,26 @@ namespace CC
       glfwTerminate();
       return false;
     }
+
     glfwMakeContextCurrent(m_window);
 
-    SetupGL();
+    // Must be done after GLFW is initialized and context is current
+    GLenum result = glewInit();
+    if (result != GLEW_OK)
+    {
+      return false;
+    }
 
+    SetupGL();
     glfwSwapBuffers(m_window);
 
     return true;
+  }
+
+  //---------------------------------------------------------------------------
+  IVertexBuffer* LowLevelGraphicsGLFW::CreateVertexBuffer()
+  {
+    return new VertexBufferVBO();
   }
 
   //---------------------------------------------------------------------------

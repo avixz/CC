@@ -25,6 +25,7 @@ namespace CC
       void Exit();
       Updater* GetUpdater();
       Input* GetInput();
+      Graphics* GetGraphics();
 
     private:
       void GameInit(ILowLevelGameSetup* lowLevelGameSetup);
