@@ -3,8 +3,10 @@
 //---------------------------------------------------------------------------
 
 #include "CC.h"
+#include "system/ILowLevelSystem.h"
 #include "graphics/ILowLevelGraphics.h"
 #include "graphics/IVertexBuffer.h"
+#include "graphics/IShaderProgram.h"
 
   using namespace CC;
 
@@ -19,9 +21,18 @@
         game->GetInput()->AddAction(new ActionKeyboard("ExitGame",
               ccKey(ccKey_ESCAPE), game->GetInput()));
 
+
+        // Add Shader
+        m_lowLevelGraphics = game->GetGraphics()->GetLowLevel();
+        m_shaderProgram = m_lowLevelGraphics->CreateShaderProgram("../data/test.vert",
+                                                                "../data/test.frag");
+        m_shaderProgram->Compile();
+        m_shaderProgram->Link();
+        m_shaderProgram->Validate();
+        m_shaderProgram->Bind();
+
         // Add a VBO
-        ILowLevelGraphics* lowLevelGraphics = game->GetGraphics()->GetLowLevel();
-        m_vbo = lowLevelGraphics->CreateVertexBuffer();
+        m_vbo = m_lowLevelGraphics->CreateVertexBuffer();
         Vector3f vertex(0.0, 0.0, 0.0);
         m_vbo->AddVertex(vertex);
         m_vbo->Compile();
@@ -38,10 +49,14 @@
       m_vbo->Bind();
       m_vbo->Draw();
       m_vbo->UnBind();
+
+      m_lowLevelGraphics->SwapBuffers();
     }
 
   private:
+    ILowLevelGraphics* m_lowLevelGraphics;
     IVertexBuffer* m_vbo;
+    IShaderProgram* m_shaderProgram;
 };
 
 int ccMain()

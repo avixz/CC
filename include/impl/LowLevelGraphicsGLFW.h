@@ -16,7 +16,10 @@ namespace CC
     public:
       LowLevelGraphicsGLFW();
       bool Init(int width, int height, const std::string& windowCaption);
+      void SwapBuffers();
       IVertexBuffer* CreateVertexBuffer();
+      IShaderProgram* CreateShaderProgram(const std::string& vertexShaderFileName,
+                                          const std::string& fragmentShaderFileName);
       void SetupGL();
       GLFWwindow* getWindow();
 

@@ -1,21 +1,19 @@
 //---------------------------------------------------------------------------
-// IVertexBuffer.h
+// IShaderProgram.h
 //---------------------------------------------------------------------------
 
 #pragma once
 
-#include "math/MathTypes.h"
-
 namespace CC
 {
-  class IVertexBuffer
+  class IShaderProgram
   {
     public:
-      virtual ~IVertexBuffer() {};
-      virtual void AddVertex(const Vector3f& vertex) = 0;
+      virtual ~IShaderProgram() {};
+      virtual void Compile() = 0;
+      virtual void Link() = 0;
+      virtual void Validate() = 0;
       virtual void Bind() = 0;
       virtual void UnBind() = 0;
-      virtual void Compile() = 0;
-      virtual void Draw() = 0;
   };
 }

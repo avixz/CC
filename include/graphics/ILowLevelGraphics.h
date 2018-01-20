@@ -12,6 +12,7 @@
 namespace CC
 {
   class IVertexBuffer;
+  class IShaderProgram;
 }
 
 namespace CC
@@ -22,6 +23,9 @@ namespace CC
   {
     public:
       virtual bool Init(int width, int height, const std::string& windowCaption) = 0;
+      virtual void SwapBuffers() = 0;
       virtual IVertexBuffer* CreateVertexBuffer() = 0;
+      virtual IShaderProgram* CreateShaderProgram(const std::string& vertexShaderSource,
+                                                  const std::string& fragmentShaderSource) = 0;
   };
 }

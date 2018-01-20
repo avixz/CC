@@ -8,6 +8,7 @@
 
 namespace CC
 {
+  //-------------------------------------------------------------------------
   void VertexBufferVBO::AddVertex(const Vector3f& vertex)
   {
     m_vertexArray.push_back(vertex);

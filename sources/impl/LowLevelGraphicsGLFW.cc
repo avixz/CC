@@ -4,6 +4,7 @@
 
 #include <string>
 #include "impl/VertexBufferVBO.h"
+#include "impl/ShaderProgramGL.h"
 #include "impl/LowLevelGraphicsGLFW.h"
 
 namespace CC
@@ -47,9 +48,22 @@ namespace CC
   }
 
   //---------------------------------------------------------------------------
+  void LowLevelGraphicsGLFW::SwapBuffers()
+  {
+    glfwSwapBuffers(m_window);
+  }
+
+  //---------------------------------------------------------------------------
   IVertexBuffer* LowLevelGraphicsGLFW::CreateVertexBuffer()
   {
     return new VertexBufferVBO();
+  }
+
+  //---------------------------------------------------------------------------
+  IShaderProgram* LowLevelGraphicsGLFW::CreateShaderProgram(const std::string& vertexShaderFileName,
+                                                            const std::string& fragmentShaderFileName)
+  {
+    return new ShaderProgramGL(vertexShaderFileName, fragmentShaderFileName);
   }
 
   //---------------------------------------------------------------------------
