@@ -5,6 +5,7 @@
 #pragma once
 
 #include <vector>
+#include "GL/glew.h"
 #include "graphics/IVertexBuffer.h"
 
 namespace CC
@@ -16,9 +17,11 @@ namespace CC
       virtual void Bind();
       virtual void UnBind();
       virtual void Compile();
-      virtual void Draw();
+      virtual void Draw(VertexBufferDrawType drawType);
 
     private:
+      GLenum getDrawTopology(const VertexBufferDrawType drawType);
+
       std::vector<Vector3f> m_vertexArray;
       unsigned int m_handle;
   };

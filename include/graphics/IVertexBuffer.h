@@ -8,6 +8,12 @@
 
 namespace CC
 {
+  enum VertexBufferDrawType
+  {
+    DRAWTYPE_POINTS,
+    DRAWTYPE_TRIANGLES
+  };
+
   class IVertexBuffer
   {
     public:
@@ -16,6 +22,6 @@ namespace CC
       virtual void Bind() = 0;
       virtual void UnBind() = 0;
       virtual void Compile() = 0;
-      virtual void Draw() = 0;
+      virtual void Draw(const VertexBufferDrawType drawType) = 0;
   };
 }

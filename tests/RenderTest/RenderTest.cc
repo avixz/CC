@@ -25,7 +25,7 @@
         // Add Shader
         m_lowLevelGraphics = game->GetGraphics()->GetLowLevel();
         m_shaderProgram = m_lowLevelGraphics->CreateShaderProgram("../data/test.vert",
-                                                                "../data/test.frag");
+                                                                  "../data/test.frag");
         m_shaderProgram->Compile();
         m_shaderProgram->Link();
         m_shaderProgram->Validate();
@@ -33,8 +33,15 @@
 
         // Add a VBO
         m_vbo = m_lowLevelGraphics->CreateVertexBuffer();
-        Vector3f vertex(0.0, 0.0, 0.0);
-        m_vbo->AddVertex(vertex);
+
+        Vector3f vertex1(-0.5f, -0.5f, 0.0f);
+        Vector3f vertex2(0.5f, -0.5f, 0.0f);
+        Vector3f vertex3(0.0f, 0.5f, 0.0f);
+
+        m_vbo->AddVertex(vertex1);
+        m_vbo->AddVertex(vertex2);
+        m_vbo->AddVertex(vertex3);
+
         m_vbo->Compile();
     }
 
@@ -47,7 +54,7 @@
 
       // Draw VBO
       m_vbo->Bind();
-      m_vbo->Draw();
+      m_vbo->Draw(DRAWTYPE_TRIANGLES);
       m_vbo->UnBind();
 
       m_lowLevelGraphics->SwapBuffers();

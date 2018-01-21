@@ -2,7 +2,6 @@
 // VertexBufferVBO.cc
 //---------------------------------------------------------------------------
 
-#include "GL/glew.h"
 #include "system/ILowLevelSystem.h"
 #include "impl/VertexBufferVBO.h"
 
@@ -35,14 +34,30 @@ namespace CC
     // Create VBO vertex arrays
     glGenBuffers(1, &m_handle);
     glBindBuffer(GL_ARRAY_BUFFER, m_handle);
-    glBufferData(GL_ARRAY_BUFFER, m_vertexArray.size() * sizeof(float), &m_vertexArray[0], GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, m_vertexArray.size() * sizeof(Vector3f), &m_vertexArray[0], GL_STATIC_DRAW);
     Log("VBO compiled\n");
   }
 
   //-------------------------------------------------------------------------
-  void VertexBufferVBO::Draw()
+  void VertexBufferVBO::Draw(const VertexBufferDrawType drawType)
   {
-    glDrawArrays(GL_POINTS, 0, 1);
+    // Get the draw call topology
+    GLenum topology = getDrawTopology(drawType);
+
+    glDrawArrays(topology, 0, m_vertexArray.size());
     Log("VBO drawn\n");
+  }
+
+  //-------------------------------------------------------------------------
+  GLenum VertexBufferVBO::getDrawTopology(const VertexBufferDrawType drawType)
+  {
+    switch (drawType)
+    {
+      case DRAWTYPE_TRIANGLES:
+        return GL_TRIANGLES;
+
+      default:
+        return GL_POINTS;
+    }
   }
 }
