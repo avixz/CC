@@ -3,6 +3,7 @@
 //---------------------------------------------------------------------------
 
 #include "CC.h"
+#include "system/ILowLevelSystem.h"
 
 using namespace CC;
 
@@ -24,6 +25,7 @@ class SystemUpdate : public IUpdateable
       {
         game->Exit();
       }
+      Log("Update called\n");
     }
 };
 

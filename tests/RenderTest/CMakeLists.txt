@@ -44,6 +44,9 @@ elseif ("${CC_PLATFORM}" STREQUAL "EMSC")
     )
   set(platformFlags "")
 
+  # linker flags (including assets)
+  set(CMAKE_EXE_LINKER_FLAGS "-s USE_GLFW=3 -s FULL_ES2=1 --embed-file data/test.vert --embed-file data/test.frag")
+
 elseif ("${CC_PLATFORM}" STREQUAL "WINDOWS")
   set(CMAKE_CXX_FLAGS "-DWINDOWS")
   set(EXE_SUFFIX "")

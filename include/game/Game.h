@@ -26,10 +26,13 @@ namespace CC
       Updater* GetUpdater();
       Input* GetInput();
       Graphics* GetGraphics();
+      void DoFrame();
+      static void StaticDoFrame();
 
     private:
       void GameInit(ILowLevelGameSetup* lowLevelGameSetup);
 
+      static Game* self;
       ILowLevelGameSetup *m_lowLeveGameSetup;
       Graphics* m_graphics;
       System* m_system;

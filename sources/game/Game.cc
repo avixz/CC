@@ -3,10 +3,8 @@
 //---------------------------------------------------------------------------
 
 
-//TODO: Remove this
 #ifdef EMSC
 #include <emscripten/emscripten.h>
-void doFrame() {};
 #endif
 #include "input/IKeyboard.h"
 
@@ -18,6 +16,8 @@ void doFrame() {};
 
 namespace CC
 {
+  Game* Game::self = 0;
+
   //-------------------------------------------------------------------------
   Game::Game(ILowLevelGameSetup* lowLevelGameSetup, int width, int height) :
     m_exit(false)
@@ -28,6 +28,8 @@ namespace CC
   //-------------------------------------------------------------------------
   void Game::GameInit(ILowLevelGameSetup* lowLevelGameSetup)
   {
+    self = this;
+
     Log("Creating Engine Modules\n");
     Log("--------------------------------------------------------\n");
 
@@ -55,7 +57,7 @@ namespace CC
     unsigned int time = GetApplicationTime();
 
 #ifdef EMSC
-    emscripten_set_main_loop(doFrame, 0, 1);
+    emscripten_set_main_loop(StaticDoFrame, 0, 1);
 #else
     while (!m_exit)
     {
@@ -70,6 +72,19 @@ namespace CC
       m_updater->Update();
     }
 #endif
+  }
+
+  //-------------------------------------------------------------------------
+  void Game::DoFrame()
+  {
+    // TODO: Call this from Run()
+    m_updater->Update();
+  }
+
+  //-------------------------------------------------------------------------
+  void Game::StaticDoFrame()
+  {
+    self->DoFrame();
   }
 
   //-------------------------------------------------------------------------

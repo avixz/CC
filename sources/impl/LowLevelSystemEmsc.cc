@@ -49,6 +49,9 @@ namespace CC
     {
       ReopenFile();
     }
+#ifdef DEBUG
+    printf(message.c_str());
+#endif
     fprintf(m_logFile, message.c_str());
     fflush(m_logFile);
   }

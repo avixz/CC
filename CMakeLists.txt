@@ -12,6 +12,9 @@ file(GLOB_RECURSE all_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/*.cc
   )
 
+# Mark debug builds
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
+
 # Platform
 if ("${CC_PLATFORM}" STREQUAL "LINUX")
   file(GLOB_RECURSE sourcesToRemove
