@@ -19,7 +19,6 @@ namespace CC
     glBindBuffer(GL_ARRAY_BUFFER, m_handle);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    Log("VBO bound\n");
   }
 
   //-------------------------------------------------------------------------
@@ -45,7 +44,6 @@ namespace CC
     GLenum topology = getDrawTopology(drawType);
 
     glDrawArrays(topology, 0, m_vertexArray.size());
-    Log("VBO drawn\n");
   }
 
   //-------------------------------------------------------------------------
