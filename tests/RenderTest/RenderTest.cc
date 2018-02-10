@@ -26,10 +26,18 @@
         m_lowLevelGraphics = game->GetGraphics()->GetLowLevel();
         m_shaderProgram = m_lowLevelGraphics->CreateShaderProgram("../data/test.vert",
                                                                   "../data/test.frag");
+        m_shaderProgram->AddUniform("scale", UNIFORMTYPE_FLOAT);
         m_shaderProgram->Compile();
         m_shaderProgram->Link();
         m_shaderProgram->Validate();
         m_shaderProgram->Bind();
+
+        // With the shader bound set the ModelView matrix
+        Matrixf mvMatrix(1.0f, 0.0f, 0.0f, 0.0f,
+                         0.0f, 1.0f, 0.0f, 0.0f,
+                         0.0f, 0.0f, 1.0f, 0.0f,
+                         0.0f, 0.0f, 0.0f, 1.0f);
+        m_lowLevelGraphics->SetMatrix(MATRIXTYPE_MODELVIEW, mvMatrix, *m_shaderProgram);
 
         // Add a VBO
         m_vbo = m_lowLevelGraphics->CreateVertexBuffer();

@@ -22,6 +22,8 @@ namespace CC
                                           const std::string& fragmentShaderFileName);
       void SetupGL();
       GLFWwindow* getWindow();
+      void ConnectAttributes();
+      void SetMatrix(MatrixType type, const Matrixf& matrix, const IShaderProgram& program);
 
     private:
       GLFWwindow* m_window;

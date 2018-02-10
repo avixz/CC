@@ -5,6 +5,8 @@
 #pragma once
 
 #include <string>
+#include "math/MathTypes.h"
+#include "graphics/GraphicsTypes.h"
 
 /**
  * Fwd Declarations
@@ -27,5 +29,6 @@ namespace CC
       virtual IVertexBuffer* CreateVertexBuffer() = 0;
       virtual IShaderProgram* CreateShaderProgram(const std::string& vertexShaderSource,
                                                   const std::string& fragmentShaderSource) = 0;
+      virtual void SetMatrix(MatrixType type, const Matrixf& matrix, const IShaderProgram& program) = 0;
   };
 }

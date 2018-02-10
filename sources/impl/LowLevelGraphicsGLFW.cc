@@ -56,7 +56,7 @@ namespace CC
   //---------------------------------------------------------------------------
   IVertexBuffer* LowLevelGraphicsGLFW::CreateVertexBuffer()
   {
-    return new VertexBufferVBO();
+    return new VertexBufferVBO(*this);
   }
 
   //---------------------------------------------------------------------------
@@ -77,5 +77,25 @@ namespace CC
   GLFWwindow* LowLevelGraphicsGLFW::getWindow()
   {
     return m_window;
+  }
+
+  //---------------------------------------------------------------------------
+  void LowLevelGraphicsGLFW::ConnectAttributes()
+  {
+  }
+
+  //---------------------------------------------------------------------------
+  void LowLevelGraphicsGLFW::SetMatrix(MatrixType type, const Matrixf& matrix, const IShaderProgram& program)
+  {
+    switch (type)
+    {
+      case MATRIXTYPE_MODELVIEW:
+        // Not implemented
+        break;
+
+      case MATRIXTYPE_PROJECTION:
+        // Not implemented
+        break;
+    }
   }
 }

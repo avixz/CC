@@ -130,10 +130,55 @@ namespace CC
   }
 
   //-------------------------------------------------------------------------
+  void ShaderProgramGL::ApplyUniforms()
+  {
+    if (m_uniforms.size() == 0)
+    {
+      Log("No uniforms to apply\n");
+      return;
+    }
+
+    for (std::vector< std::pair<std::string, UniformType> >::const_iterator it = m_uniforms.begin();
+         it != m_uniforms.end(); ++it)
+    {
+      const std::string& name = it->first;
+      const UniformType& type = it->second;
+      GLuint location = glGetUniformLocation(m_shaderProgram, it->first.c_str());
+
+      if (location == -1)
+      {
+        Log("Cannot obtain location for uniform %s\n", name.c_str());
+      }
+
+      // FIXME: Retrieve the uniform value
+      switch (type)
+      {
+        case UNIFORMTYPE_FLOAT:
+          glUniform1f(location, 0.5f);
+          break;
+
+        case UNIFORMTYPE_MATRIX:
+          // Not yet implemented
+          break;
+      }
+    }
+    Log("Shader uniforms applied\n");
+  }
+
+  //-------------------------------------------------------------------------
+  void ShaderProgramGL::AddUniform(const std::string& name, const UniformType& type)
+  {
+    m_uniforms.push_back(std::make_pair(name, type));
+  }
+
+  //-------------------------------------------------------------------------
   void ShaderProgramGL::Bind()
   {
     glUseProgram(m_shaderProgram);
     Log("Shader program bound\n");
+
+    ApplyUniforms();
+    Log("Shader uniforms applied\n");
   }
 
   //-------------------------------------------------------------------------
